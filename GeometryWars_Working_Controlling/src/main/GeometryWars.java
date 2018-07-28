@@ -493,15 +493,15 @@ public class GeometryWars extends PApplet {
 			case 'F':
 				boxList.add(boxCursor.x, boxCursor.y, boxCursor.z);
 				break;
-			case 'h':
-			case 'H':
-				// controller.setMovePosition(posCursor.getPos());
-				if (player.getB() == boxList2) {
-					player.transport(boxList);
-				} else {
-					player.transport(boxList2);
-				}
-				break;
+//			case 'h':
+//			case 'H':
+//				// controller.setMovePosition(posCursor.getPos());
+//				if (player.getB() == boxList2) {
+//					player.transport(boxList);
+//				} else {
+//					player.transport(boxList2);
+//				}
+//				break;
 			case ' ':
 				boxCursor.turnSelected();
 				posCursor.turnSelected();
@@ -511,53 +511,53 @@ public class GeometryWars extends PApplet {
 				cameraMode = cameraMode.next();
 				break;
 			//Accelerates rotation speed such that they have same angular speed.
-			case 'z':
-			case 'Z': {
-				PVector A = boxList.getAngSpeed();
-				PVector B = boxList2.getAngSpeed();
-				PVector target = PVector.add(A, B).mult(0.5f);
-				boxList.setTargetAngSpeed(target);
-				boxList2.setTargetAngSpeed(target);
-				// boxList.setAngSpeed(A.add(B).mult(0.5f));
-				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
-				break;
-			}
+//			case 'z':
+//			case 'Z': {
+//				PVector A = boxList.getAngSpeed();
+//				PVector B = boxList2.getAngSpeed();
+//				PVector target = PVector.add(A, B).mult(0.5f);
+//				boxList.setTargetAngSpeed(target);
+//				boxList2.setTargetAngSpeed(target);
+//				// boxList.setAngSpeed(A.add(B).mult(0.5f));
+//				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
+//				break;
+//			}
 			//Change angular speed so that the rotate along line through their origins
-			case 'x':
-			case 'X': {
-				PVector A = boxList.getOrigin();
-				PVector B = boxList2.getOrigin();
-				PVector midPoint = PVector.add(A, B).mult(0.5f);
-				PVector target = PVector.sub(midPoint, A).normalize().div(100f);
-				boxList.setTargetAngSpeed(target);
-				boxList2.setTargetAngSpeed(target);
-				// boxList.setAngSpeed(A.add(B).mult(0.5f));
-				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
-				break;
-			}
+//			case 'x':
+//			case 'X': {
+//				PVector A = boxList.getOrigin();
+//				PVector B = boxList2.getOrigin();
+//				PVector midPoint = PVector.add(A, B).mult(0.5f);
+//				PVector target = PVector.sub(midPoint, A).normalize().div(100f);
+//				boxList.setTargetAngSpeed(target);
+//				boxList2.setTargetAngSpeed(target);
+//				// boxList.setAngSpeed(A.add(B).mult(0.5f));
+//				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
+//				break;
+//			}
 			// Turns the cubes to align sides:
-			case 'v':
-			case 'V': {
-				PVector A = boxList.getOrigin();
-				PVector B = boxList2.getOrigin();
-				PVector X = A.sub(B);
-				PVector Y = X.cross(new PVector(1,0,0)).normalize();
-				boxList2.applyTorque(Y.div(100f));
-//				Quaternion A = boxList.getOrientation();
-//				boxList2.setTargetOrientation(A);
-//				Quaternion B = boxList2.getOrientation();
-//				Quaternion C = A.mult(B.conjugate());
-				// boxList.setAngSpeed(A.add(B).mult(0.5f));
-				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
-				break;
-			}
-			case 'b':
-			case 'B':
-				PVector A = boxList.getOrigin();
-				PVector B = boxList2.getOrigin();
-				PVector difference = PVector.sub(A, B);
-				boxList2.applyForce(difference.div(1000f));
-				break;
+//			case 'v':
+//			case 'V': {
+//				PVector A = boxList.getOrigin();
+//				PVector B = boxList2.getOrigin();
+//				PVector X = A.sub(B);
+//				PVector Y = X.cross(new PVector(1,0,0)).normalize();
+//				boxList2.applyTorque(Y.div(100f));
+////				Quaternion A = boxList.getOrientation();
+////				boxList2.setTargetOrientation(A);
+////				Quaternion B = boxList2.getOrientation();
+////				Quaternion C = A.mult(B.conjugate());
+//				// boxList.setAngSpeed(A.add(B).mult(0.5f));
+//				// boxList2.setAngSpeed(A.add(B).mult(0.5f));
+//				break;
+//			}
+//			case 'b':
+//			case 'B':
+//				PVector A = boxList.getOrigin();
+//				PVector B = boxList2.getOrigin();
+//				PVector difference = PVector.sub(A, B);
+//				boxList2.applyForce(difference.div(1000f));
+//				break;
 			case 'n':
 			case 'N':
 				PVector xPos = player.getGlobalPos();
