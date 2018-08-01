@@ -1,6 +1,7 @@
 package main;
 import processing.core.*;
 import units.*;
+import peasy.*;
 
 import java.util.*;
 import Geometry.Geometry;
@@ -32,14 +33,17 @@ public class GeometryWars extends PApplet {
 	Controller controller;
 	
 	//Viewing
-	float phi;
-	float theta;
+	PeasyCam cam;
+//	float phi;
+//	float theta;
 	PVector camPos;
 	CameraMode cameraMode = CameraMode.freeView;
 	float rotSpeed = 0.02f;
 	float cursorSpeed = 1f;
-	float zoom;
+//	float zoom;
 	float zoomSpeed = 5;
+	private double maxZoom;
+	private double minZoom;
 	
 	//Buttons and keypresses
 	boolean UP_PRESSED = false;
@@ -83,10 +87,19 @@ public class GeometryWars extends PApplet {
 	}
 
 	public void setup() {
-		phi = 0;
-		theta = PI / 4;
-		zoom = 200;
+//		phi = 0;
+//		theta = PI / 4;
+//		zoom = 200;
 		sideLength = 300;
+		maxZoom = 4*sideLength;
+		minZoom = 2*sideLength;
+		
+		cam = new PeasyCam(this, sideLength);
+		cam.setMinimumDistance(minZoom);
+		cam.setMaximumDistance(maxZoom);
+		cam.setPitchRotationMode();
+		cam.setYawRotationMode();
+		
 		camPos = new PVector(0, 0, 0);
 		satList = new SateliteList();
 		
@@ -125,10 +138,10 @@ public class GeometryWars extends PApplet {
 	public void draw() {
 		background(color(30, 30, 30));
 		
-		translate(width / 2, height / 2, zoom);
+//		translate(width / 2, height / 2, zoom);
 
-		rotateX(theta);
-		rotateZ(phi);
+//		rotateX(theta);
+//		rotateZ(phi);
 		
 		if(cameraMode == CameraMode.playerView) {
 			PVector X = player.getGlobalDirection();
@@ -200,6 +213,11 @@ public class GeometryWars extends PApplet {
 		
 		//Draw skybox/cubemap:
 		drawCubemap();
+		
+//		cam.beginHUD();
+//		fill(color(255,255,255));
+//		rect(100, 100, 100, 100);
+//		cam.endHUD();
 	}
 
 	private void drawCubemap() {
@@ -339,24 +357,24 @@ public class GeometryWars extends PApplet {
 
 	// Updates all stuff using the keys that are pressed.
 	public void updateKeyPress() {
-		if (A_PRESSED) {
-			phi += -rotSpeed;
-		}
-		if (D_PRESSED) {
-			phi += rotSpeed;
-		}
-		if (W_PRESSED && theta > 0) {
-			theta -= rotSpeed;
-		}
-		if (S_PRESSED && theta < PI) {
-			theta += rotSpeed;
-		}
-		if (E_PRESSED && zoom < 600) {
-			zoom += zoomSpeed;
-		}
-		if (Q_PRESSED && zoom > -2500) {
-			zoom -= zoomSpeed;
-		}
+//		if (A_PRESSED) {
+//			phi += -rotSpeed;
+//		}
+//		if (D_PRESSED) {
+//			phi += rotSpeed;
+//		}
+//		if (W_PRESSED && theta > 0) {
+//			theta -= rotSpeed;
+//		}
+//		if (S_PRESSED && theta < PI) {
+//			theta += rotSpeed;
+//		}
+//		if (E_PRESSED && zoom < 600) {
+//			zoom += zoomSpeed;
+//		}
+//		if (Q_PRESSED && zoom > -2500) {
+//			zoom -= zoomSpeed;
+//		}
 		if (UP_PRESSED) {
 			 player.moveForwards();
 //			camPos.y += 1;
