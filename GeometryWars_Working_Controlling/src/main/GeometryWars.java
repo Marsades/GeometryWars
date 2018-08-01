@@ -21,6 +21,7 @@ public class GeometryWars extends PApplet {
 	private Geometry geom;
 	private SateliteList satList;
 //	Robot rob;
+	ArrayList<Unit> UnitList;
 	
 	//Units
 	public Soldier player;
@@ -31,6 +32,10 @@ public class GeometryWars extends PApplet {
 	private PosCursor posCursor;
 	private Controller controller;
 	
+	// Temporary line object
+	PVector startPoint = new PVector(0, 0, 0);
+	PVector endPoint = new PVector(0, 0, 0);
+
 	//Viewing
 	private float phi;
 	private float theta;
@@ -60,6 +65,9 @@ public class GeometryWars extends PApplet {
 	private boolean I_PRESSED = false;
 	private boolean U_PRESSED = false;
 	private boolean O_PRESSED = false;
+	private boolean ONE_PRESSED = false;
+	private boolean TWO_PRESSED = false;
+	private boolean SHIFT_PRESSED = false;
 	private boolean buildXPos = false;
 	private boolean buildYPos = false;
 	private boolean buildXNeg = false;
@@ -74,6 +82,10 @@ public class GeometryWars extends PApplet {
 	private int dirCounter;
 	private int counter;
 	int action;
+  private float defect = 0;
+	private float precision = 1;
+  
+  
 	public static void main(String[] args) {
 		PApplet.main("main.GeometryWars");
 	}
@@ -88,7 +100,8 @@ public class GeometryWars extends PApplet {
 		phi = 0;
 		theta = 0;
 		sideLength = 300;
-		camPos = new PVector(0, 0, 0);
+		camFocus = new PVector(0, 0, 0);
+		
 		satList = new SateliteList();
 		minZoom = 2 * sideLength;
 		maxZoom = 4 * sideLength;
@@ -123,7 +136,8 @@ public class GeometryWars extends PApplet {
 		p = loadImage("C:\\Users\\anders\\eclipse-workspace\\StartSkyImage.png");
 		p.resize(800, 800);
 		float cameraZ = (float) ((this.height/2.0f) / tan(PI/6f) );
-		perspective(PI/3.0f, (float) width / (float) height, cameraZ/100.0f, cameraZ*100.0f);
+//		perspective(PI/3.0f, (float) width / (float) height, cameraZ/100.0f, cameraZ*100.0f);
+		perspective(PI/3.0f, (float) width / (float) height, 1f, cameraZ*100.0f);
 		printProjection();
 	}
 	
@@ -132,7 +146,7 @@ public class GeometryWars extends PApplet {
 		camera(width / 2, height / 2, zoom, width / 2, height / 2, 0, 0, 1, 0);
 //		translate(width / 2, height / 2, zoom);
 		translate(width / 2, height / 2, 0);
-		
+
 		rotateX(theta);
 		rotateZ(phi);
 		
@@ -157,7 +171,7 @@ public class GeometryWars extends PApplet {
 			applyMatrix(Q.toRotationMatrix());
 		}
 
-		translate(camPos.x, camPos.y, camPos.z);
+		translate(camFocus.x, camFocus.y, camFocus.z);
 		
 		satList.draw();
 		
@@ -193,7 +207,13 @@ public class GeometryWars extends PApplet {
 			Marker k = markerList.get(it);
 			k.draw();
 		}
-
+		
+		pushStyle();
+		stroke(color(255, 255, 255));
+		endPoint = camPos.copy().mult(500 /*- zoom*/ + defect);
+		line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z);
+		popStyle();
+		
 		updateKeyPress();
 		
 //		AI Controlling
@@ -343,41 +363,61 @@ public class GeometryWars extends PApplet {
 		}
 	}
 
+	public PVector sphericalVector(float phi, float theta) {
+		return new PVector(sin(phi)*sin(theta), cos(phi)*sin(theta), cos(theta));
+	}
+
+	public void mousePressed() {
+		float mX = mouseX;
+		float mY = mouseY;
+		printProjection();
+		// printCamera();
+		System.out.println("[" + mX + "," + mY + "]");
+		System.out.println("Camera position: " + camPos.toString());
+		System.out.println(startPoint.toString() + " and " + endPoint.toString());
+
+	}
+	
 	// Updates all stuff using the keys that are pressed.
 	public void updateKeyPress() {
+		if (SHIFT_PRESSED) {
+			precision = 0.02f;
+		} else {
+			precision = 1.0f;
+		}
 		if (A_PRESSED) {
-			phi += -rotSpeed;
+			phi += -rotSpeed*precision;
 		}
 		if (D_PRESSED) {
-			phi += rotSpeed;
+			phi += rotSpeed*precision;
 		}
 		if (W_PRESSED && theta > 0) {
-			theta -= rotSpeed;
+			theta -= rotSpeed*precision;
 		}
 		if (S_PRESSED && theta < PI) {
-			theta += rotSpeed;
+			theta += rotSpeed*precision;
 		}
 		if (Q_PRESSED && zoom < maxZoom) {
-			zoom += zoomSpeed;
+			zoom += zoomSpeed*precision;
 		}
 		if (E_PRESSED && zoom > minZoom) {
-			zoom -= zoomSpeed;
-		}
-		if (UP_PRESSED) {
-			 player.moveForwards();
-//			camPos.y += 1;
+			zoom -= zoomSpeed*precision;
+    }
+    if (UP_PRESSED) {
+			player.moveForwards();
+			// camPos.y += 1;
 		}
 		if (DOWN_PRESSED) {
-//			 player.move(-playerMoveSpeed);
-//			camPos.y -= 1;
+			// player.move(-playerMoveSpeed);
+			// camPos.y -= 1;
 		}
 		if (LEFT_PRESSED) {
 			player.turn(false);
-//			camPos.x += 1;
+			// camPos.x += 1;
 		}
 		if (RIGHT_PRESSED) {
 			player.turn(true);
-//			camPos.x -= 1;
+			// camPos.x -= 1;
 		}
 		if (posCursor.selected && L_PRESSED) {
 			posCursor.moveX(-cursorSpeed);
@@ -391,6 +431,12 @@ public class GeometryWars extends PApplet {
 		if (posCursor.selected && I_PRESSED) {
 			posCursor.moveY(cursorSpeed);
 		}
+		if (ONE_PRESSED) {
+			defect -= 5f*precision;
+		}
+		if (TWO_PRESSED) {
+			defect += 5f*precision;
+		}
 	}
 
 	public void mousePressed() {
@@ -401,12 +447,11 @@ public class GeometryWars extends PApplet {
 		System.out.println("[" + mX + "," + mY + "]");
 		printCamera();
 	}
-	
+  
 	// Updates key presses
 	public void keyPressed() {
 		if (key == CODED) {
 //			double mouseX = MouseInfo.getPointerInfo().getLocation().getX();
-//			double mouseY = MouseInfo.getPointerInfo().getLocation().getY();
 			switch (keyCode) {
 			case LEFT:
 				LEFT_PRESSED = true;
@@ -423,6 +468,9 @@ public class GeometryWars extends PApplet {
 			case UP:
 //				player.moveForwards();
 				UP_PRESSED = true;
+				break;
+			case SHIFT:
+				SHIFT_PRESSED = true;
 				break;
 			}
 		} else {
@@ -578,6 +626,18 @@ public class GeometryWars extends PApplet {
 						new SurfPoint(xPos, new int[] {xFace}), 
 						new SurfPoint(yPos, new int[] {yFace}));
 				break;
+			case '1':
+				ONE_PRESSED = true;
+				System.out.println("One pressed, defect: " + defect + ", Zoom: " + zoom);
+				break;
+			case '2':
+				TWO_PRESSED = true;
+				System.out.println("Two pressed, defect: " + defect + ", Zoom: " + zoom);
+				break;
+			case '.':
+				camPos = sphericalVector(phi + PI,  - theta);
+				System.out.println("Punktum pressed, defect: " + defect + ", Zoom: " + zoom);
+				break;
 			}
 		}
 	}
@@ -597,6 +657,9 @@ public class GeometryWars extends PApplet {
 				break;
 			case UP:
 				UP_PRESSED = false;
+				break;
+			case SHIFT:
+				SHIFT_PRESSED = false;
 				break;
 			}
 		} else {
@@ -640,6 +703,12 @@ public class GeometryWars extends PApplet {
 			case 'l':
 			case 'L':
 				L_PRESSED = false;
+				break;
+			case '1':
+				ONE_PRESSED = false;
+				break;
+			case '2':
+				TWO_PRESSED = false;
 				break;
 			}
 		}
