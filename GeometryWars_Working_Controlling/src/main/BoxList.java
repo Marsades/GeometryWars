@@ -48,8 +48,8 @@ public class BoxList {
 		this.cursorY = 0;
 		this.cursorZ = 0;
 		angSpeed = new PVector(
-					(float) (0.02*(2*Math.random() - 1.0)),
-					(float) (0.02*(2*Math.random() - 1.0)),
+					(float) (0.00*(2*Math.random() - 1.0)),
+					(float) (0.00*(2*Math.random() - 1.0)),
 					(float) (0.00*(2*Math.random() - 1.0))
 							);
 		targetAngSpeed = angSpeed;

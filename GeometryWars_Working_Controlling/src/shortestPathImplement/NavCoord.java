@@ -175,8 +175,8 @@ public class NavCoord {
 	public static PathMatrixPair AllPairShortestPath(PathMatrixPair W) {
 		// Initialization;
 		int N = W.length;
-		printMatrix("Input distances: ", W.distances);
-		printMatrix("Input routes: ", W.route);
+//		printMatrix("Input distances: ", W.distances);
+//		printMatrix("Input routes: ", W.route);
 		PathMatrixPair output = (PathMatrixPair) W.clone();
 
 		for (int k = 0; k < N; k++) {
@@ -191,8 +191,8 @@ public class NavCoord {
 				}
 			}
 		}
-		printMatrix("Output distances: ", output.distances);
-		printMatrix("Output routes: ", output.route);
+//		printMatrix("Output distances: ", output.distances);
+//		printMatrix("Output routes: ", output.route);
 		return output;
 	}
 
