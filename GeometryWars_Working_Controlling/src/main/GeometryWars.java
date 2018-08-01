@@ -40,8 +40,10 @@ public class GeometryWars extends PApplet {
 	float cursorSpeed = 1f;
 	float zoom;
 	float zoomSpeed = 5;
-	
-	//Buttons and keypresses
+	public float sideLength;
+	int dirCounter;
+	int counter;
+	int action;
 	boolean UP_PRESSED = false;
 	boolean DOWN_PRESSED = false;
 	boolean LEFT_PRESSED = false;
@@ -62,18 +64,13 @@ public class GeometryWars extends PApplet {
 	boolean buildYPos = false;
 	boolean buildXNeg = false;
 	boolean buildYNeg = false;
-	
+	ArrayList<PVector> T;
 	
 	//Utilities:
 	int s = 36;
 	PImage  p;
 	Random rand;
-	public float sideLength;
-	int dirCounter;
-	int counter;
-	int action;
-	ArrayList<PVector> T;
-	
+
 	public static void main(String[] args) {
 		PApplet.main("main.GeometryWars");
 	}
