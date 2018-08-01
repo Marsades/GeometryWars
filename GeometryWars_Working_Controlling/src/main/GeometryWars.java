@@ -16,89 +16,97 @@ import java.util.Random;
 public class GeometryWars extends PApplet {
 	
 	//Structures and objects
-	BoxList boxList;
-	BoxList boxList2;
-	Geometry geom;
-	SateliteList satList;
+	private BoxList boxList;
+	private BoxList boxList2;
+	private Geometry geom;
+	private SateliteList satList;
 //	Robot rob;
 	ArrayList<Unit> UnitList;
 	
 	//Units
 	public Soldier player;
-	HashMap<PVector, Marker> markerList;
+	private HashMap<PVector, Marker> markerList;
 
 	//User interface/controlling
-	BoxCursor boxCursor;
-	PosCursor posCursor;
-	Controller controller;
+	private BoxCursor boxCursor;
+	private PosCursor posCursor;
+	private Controller controller;
 	
 	// Temporary line object
 	PVector startPoint = new PVector(0, 0, 0);
 	PVector endPoint = new PVector(0, 0, 0);
 
 	//Viewing
-	float phi;
-	float theta;
-	PVector camFocus;
-	PVector camPos = new PVector(0,0,0);
-	CameraMode cameraMode = CameraMode.freeView;
-	float rotSpeed = 0.01f;
-	float cursorSpeed = 1f;
-	float zoom;
-	float zoomSpeed = 2f;
-	public float sideLength;
-	int dirCounter;
-	int counter;
-	int action;
-	boolean UP_PRESSED = false;
-	boolean DOWN_PRESSED = false;
-	boolean LEFT_PRESSED = false;
-	boolean RIGHT_PRESSED = false;
-	boolean A_PRESSED = false;
-	boolean S_PRESSED = false;
-	boolean D_PRESSED = false;
-	boolean W_PRESSED = false;
-	boolean E_PRESSED = false;
-	boolean Q_PRESSED = false;
-	boolean J_PRESSED = false;
-	boolean K_PRESSED = false;
-	boolean L_PRESSED = false;
-	boolean I_PRESSED = false;
-	boolean U_PRESSED = false;
-	boolean O_PRESSED = false;
+	private float phi;
+	private float theta;
+	private PVector camPos;
+	private CameraMode cameraMode = CameraMode.freeView;
+	private float rotSpeed = 0.02f;
+	private float cursorSpeed = 1f;
+	private float zoom;
+	private float zoomSpeed = 5;
+	private float minZoom;
+	private float maxZoom;
+	
+	//Buttons and keypresses
+	private boolean UP_PRESSED = false;
+	private boolean DOWN_PRESSED = false;
+	private boolean LEFT_PRESSED = false;
+	private boolean RIGHT_PRESSED = false;
+	private boolean A_PRESSED = false;
+	private boolean S_PRESSED = false;
+	private boolean D_PRESSED = false;
+	private boolean W_PRESSED = false;
+	private boolean E_PRESSED = false;
+	private boolean Q_PRESSED = false;
+	private boolean J_PRESSED = false;
+	private boolean K_PRESSED = false;
+	private boolean L_PRESSED = false;
+	private boolean I_PRESSED = false;
+	private boolean U_PRESSED = false;
+	private boolean O_PRESSED = false;
 	private boolean ONE_PRESSED = false;
 	private boolean TWO_PRESSED = false;
 	private boolean SHIFT_PRESSED = false;
-	boolean buildXPos = false;
-	boolean buildYPos = false;
-	boolean buildXNeg = false;
-	boolean buildYNeg = false;
-	ArrayList<PVector> T;
+	private boolean buildXPos = false;
+	private boolean buildYPos = false;
+	private boolean buildXNeg = false;
+	private boolean buildYNeg = false;
 	
 	//Utilities:
-	int s = 36;
-	PImage  p;
-	Random rand;
-	private float defect = 0;
+	private int s = 36;
+	private PImage  p;
+	private Random rand;
+	private ArrayList<PVector> T;
+	public float sideLength;
+	private int dirCounter;
+	private int counter;
+	int action;
+  private float defect = 0;
 	private float precision = 1;
-	
+  
+  
 	public static void main(String[] args) {
 		PApplet.main("main.GeometryWars");
 	}
 
+
 	public void settings() {
-		size(1600, 900, P3D);
-//		fullScreen(P3D);
+		size(1400, 800, P3D);
+		// fullScreen(P3D);
 	}
 
 	public void setup() {
 		phi = 0;
-		theta = PI / 4;
-		zoom = 200;
+		theta = 0;
 		sideLength = 300;
 		camFocus = new PVector(0, 0, 0);
 		
 		satList = new SateliteList();
+		minZoom = 2 * sideLength;
+		maxZoom = 4 * sideLength;
+
+		zoom = (minZoom + maxZoom) / 2;
 		
 		rand = new Random(0);
 		boxList = new BoxList(this, sideLength, "Box" + 1);
@@ -134,10 +142,10 @@ public class GeometryWars extends PApplet {
 	}
 	
 	public void draw() {
-		background(color(30, 30, 30));
 		
-		translate(width / 2, height / 2, zoom);
-//		translate(width / 2, height / 2, 0);
+		camera(width / 2, height / 2, zoom, width / 2, height / 2, 0, 0, 1, 0);
+//		translate(width / 2, height / 2, zoom);
+		translate(width / 2, height / 2, 0);
 
 		rotateX(theta);
 		rotateZ(phi);
@@ -389,13 +397,13 @@ public class GeometryWars extends PApplet {
 		if (S_PRESSED && theta < PI) {
 			theta += rotSpeed*precision;
 		}
-		if (E_PRESSED && zoom < 600) {
+		if (Q_PRESSED && zoom < maxZoom) {
 			zoom += zoomSpeed*precision;
 		}
-		if (Q_PRESSED && zoom > -2500) {
+		if (E_PRESSED && zoom > minZoom) {
 			zoom -= zoomSpeed*precision;
-		}
-		if (UP_PRESSED) {
+    }
+    if (UP_PRESSED) {
 			player.moveForwards();
 			// camPos.y += 1;
 		}
@@ -431,6 +439,15 @@ public class GeometryWars extends PApplet {
 		}
 	}
 
+	public void mousePressed() {
+		float mX = mouseX;
+		float mY = mouseY;
+//		printProjection();
+//		printCamera();
+		System.out.println("[" + mX + "," + mY + "]");
+		printCamera();
+	}
+  
 	// Updates key presses
 	public void keyPressed() {
 		if (key == CODED) {
