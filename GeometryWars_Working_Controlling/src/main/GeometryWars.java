@@ -21,7 +21,7 @@ public class GeometryWars extends PApplet {
 	private Geometry geom;
 	private SateliteList satList;
 //	Robot rob;
-	ArrayList<Unit> UnitList;
+	private ArrayList<Unit> UnitList;
 	
 	//Units
 	public Soldier player;
@@ -33,13 +33,14 @@ public class GeometryWars extends PApplet {
 	private Controller controller;
 	
 	// Temporary line object
-	PVector startPoint = new PVector(0, 0, 0);
-	PVector endPoint = new PVector(0, 0, 0);
+	private PVector startPoint;
+	private PVector endPoint;
 
 	//Viewing
 	private float phi;
 	private float theta;
 	private PVector camPos;
+	private PVector camFocus;
 	private CameraMode cameraMode = CameraMode.freeView;
 	private float rotSpeed = 0.02f;
 	private float cursorSpeed = 1f;
@@ -81,32 +82,35 @@ public class GeometryWars extends PApplet {
 	public float sideLength;
 	private int dirCounter;
 	private int counter;
-	int action;
-  private float defect = 0;
+	private int action;
+	private float defect = 0;
 	private float precision = 1;
-  
+	private float FoV;
+	private float aspectRatio;
   
 	public static void main(String[] args) {
 		PApplet.main("main.GeometryWars");
 	}
 
-
 	public void settings() {
-		size(1400, 800, P3D);
-		// fullScreen(P3D);
+//		size(1400, 800, P3D);
+		 fullScreen(P3D);
 	}
 
 	public void setup() {
 		phi = 0;
 		theta = 0;
 		sideLength = 300;
+		camPos = new PVector(0, 0, 0);
 		camFocus = new PVector(0, 0, 0);
 		
 		satList = new SateliteList();
-		minZoom = 2 * sideLength;
+		minZoom = sideLength/2;
 		maxZoom = 4 * sideLength;
 
 		zoom = (minZoom + maxZoom) / 2;
+		startPoint = new PVector(0,0,0);
+		endPoint = new PVector(0,0,0);
 		
 		rand = new Random(0);
 		boxList = new BoxList(this, sideLength, "Box" + 1);
@@ -136,8 +140,9 @@ public class GeometryWars extends PApplet {
 		p = loadImage("C:\\Users\\anders\\eclipse-workspace\\StartSkyImage.png");
 		p.resize(800, 800);
 		float cameraZ = (float) ((this.height/2.0f) / tan(PI/6f) );
-//		perspective(PI/3.0f, (float) width / (float) height, cameraZ/100.0f, cameraZ*100.0f);
-		perspective(PI/3.0f, (float) width / (float) height, 1f, cameraZ*100.0f);
+		FoV = PI/3.0f;
+		aspectRatio = (float) width / (float) height;
+		perspective(FoV, aspectRatio, 1f, cameraZ*100.0f);
 		printProjection();
 	}
 	
@@ -162,7 +167,6 @@ public class GeometryWars extends PApplet {
 //			System.out.print(X.toString());
 //			System.out.print(Y.toString());
 //			System.out.println(Z.toString());
-			
 		}		
 		
 		if(cameraMode == CameraMode.lockedView) {
@@ -210,7 +214,8 @@ public class GeometryWars extends PApplet {
 		
 		pushStyle();
 		stroke(color(255, 255, 255));
-		endPoint = camPos.copy().mult(500 /*- zoom*/ + defect);
+		strokeWeight(5);
+		startPoint = camPos.copy();
 		line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z);
 		popStyle();
 		
@@ -367,17 +372,6 @@ public class GeometryWars extends PApplet {
 		return new PVector(sin(phi)*sin(theta), cos(phi)*sin(theta), cos(theta));
 	}
 
-	public void mousePressed() {
-		float mX = mouseX;
-		float mY = mouseY;
-		printProjection();
-		// printCamera();
-		System.out.println("[" + mX + "," + mY + "]");
-		System.out.println("Camera position: " + camPos.toString());
-		System.out.println(startPoint.toString() + " and " + endPoint.toString());
-
-	}
-	
 	// Updates all stuff using the keys that are pressed.
 	public void updateKeyPress() {
 		if (SHIFT_PRESSED) {
@@ -440,12 +434,17 @@ public class GeometryWars extends PApplet {
 	}
 
 	public void mousePressed() {
-		float mX = mouseX;
-		float mY = mouseY;
-//		printProjection();
-//		printCamera();
-		System.out.println("[" + mX + "," + mY + "]");
+		float mX = ((float) (mouseX*2 - width)) / ((float) width);
+		float mY = ((float) (mouseY*2 - height)) / ((float) height);
+		printProjection();
 		printCamera();
+		sphericalVector(phi, theta);
+		getMatrix();
+		PVector direction = (new PVector(tan(mX*FoV/2), -tan(mY*FoV/2 / aspectRatio), 1)).mult(100);
+		endPoint = camPos.copy().add(direction);
+		System.out.println("[" + mX + "," + mY + "]");
+		System.out.println("Camera position: " + camPos.toString());
+		System.out.println(startPoint.toString() + " and " + endPoint.toString());
 	}
   
 	// Updates key presses
@@ -635,7 +634,7 @@ public class GeometryWars extends PApplet {
 				System.out.println("Two pressed, defect: " + defect + ", Zoom: " + zoom);
 				break;
 			case '.':
-				camPos = sphericalVector(phi + PI,  - theta);
+				camPos = sphericalVector(phi + PI,  - theta).mult(zoom);
 				System.out.println("Punktum pressed, defect: " + defect + ", Zoom: " + zoom);
 				break;
 			}
