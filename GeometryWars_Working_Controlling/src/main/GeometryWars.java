@@ -17,16 +17,16 @@ public class GeometryWars extends PApplet {
 	
 	//Structures and objects
 	private BoxList boxList;
-	private BoxList boxList2;
-	private Geometry geom;
+//	private BoxList boxList2;
+//	private Geometry geom;
 	private SateliteList satList;
 //	Robot rob;
-	private ArrayList<Unit> UnitList;
+//	private ArrayList<Unit> UnitList;
 	
 	//Units
 	public Soldier player;
 	private HashMap<PVector, Marker> markerList;
-
+	
 	//User interface/controlling
 	private BoxCursor boxCursor;
 	private PosCursor posCursor;
@@ -69,16 +69,15 @@ public class GeometryWars extends PApplet {
 	private boolean ONE_PRESSED = false;
 	private boolean TWO_PRESSED = false;
 	private boolean SHIFT_PRESSED = false;
-	private boolean buildXPos = false;
-	private boolean buildYPos = false;
-	private boolean buildXNeg = false;
-	private boolean buildYNeg = false;
+//	private boolean buildXPos = false;
+//	private boolean buildYPos = false;
+//	private boolean buildXNeg = false;
+//	private boolean buildYNeg = false;
 	
 	//Utilities:
 	private int s = 36;
 	private PImage  p;
-	private Random rand;
-	private ArrayList<PVector> T;
+//	private Random rand;
 	public float sideLength;
 	private int dirCounter;
 	private int counter;
@@ -87,14 +86,27 @@ public class GeometryWars extends PApplet {
 	private float precision = 1;
 	private float FoV;
 	private float aspectRatio;
+	
+	//Second view:
+//	private PWindow window;
+//	PApplet[] windows;
   
 	public static void main(String[] args) {
 		PApplet.main("main.GeometryWars");
 	}
 
 	public void settings() {
-//		size(1400, 800, P3D);
-		 fullScreen(P3D);
+		size(1400, 800, P3D);
+//		fullScreen(P3D);
+		
+//		//Setup of second-view window
+//		String[] args = { "--location=10,10", "PWindow" };
+//		window = new PWindow();
+//		PApplet.runSketch(args, window);
+
+//		windows = new PApplet[2];
+//		windows[0] = this;
+//		windows[1] = window;
 	}
 
 	public void setup() {
@@ -112,7 +124,7 @@ public class GeometryWars extends PApplet {
 		startPoint = new PVector(0,0,0);
 		endPoint = new PVector(0,0,0);
 		
-		rand = new Random(0);
+//		rand = new Random(0);
 		boxList = new BoxList(this, sideLength, "Box" + 1);
 //		boxList2 = new BoxList(this, sideLength, new PVector(-sideLength, -sideLength, -2*sideLength), "Box"+2);
 		
@@ -127,7 +139,7 @@ public class GeometryWars extends PApplet {
 		boxCursor = new BoxCursor(this, boxList, sideLength);
 		posCursor = new PosCursor(this, sideLength, boxList, 0);
 		player = new Soldier(this, sideLength, boxList, 0);
-		geom = new Geometry(this);
+//		geom = new Geometry(this);
 //		try {
 //			rob = new Robot();
 //		} catch (AWTException e) {
@@ -144,16 +156,38 @@ public class GeometryWars extends PApplet {
 		aspectRatio = (float) width / (float) height;
 		perspective(FoV, aspectRatio, 1f, cameraZ*100.0f);
 		printProjection();
+		
 	}
 	
-	public void draw() {
-		
-		camera(width / 2, height / 2, zoom, width / 2, height / 2, 0, 0, 1, 0);
-//		translate(width / 2, height / 2, zoom);
-		translate(width / 2, height / 2, 0);
+//	public void translate(float x, float y, float z) {
+//		super.translate(x, y, z);
+//		window.translate(x, y, z);
+//	}
+//
+//	public void box(float size) {
+//		super.box(size);
+//		window.box(size);
+//	}
+//
+//	public void background(float r, float g, float b) {
+//		super.background(r, g, b);
+//		window.background(r, g, b);
+//	}
 
+	public void draw() {
+		//		camera(width / 2, height / 2, zoom, width / 2, height / 2, 0, 0, 1, 0);
+		camera(0, 0, zoom, 0, 0, 0, 0, 1, 0);
+//		window.camera(zoom, 0, 0, 0, 0, 0, 0, 1, 0);
+		
+//		translate(width / 2, height / 2, zoom);
+//		translate(width / 2, height / 2, 0);
+//		for (int i = 0; i < windows.length; i++) {
+//			windows[i].rotateX(theta);
+//			windows[i].rotateZ(phi);
+//		}
 		rotateX(theta);
 		rotateZ(phi);
+		
 		
 		if(cameraMode == CameraMode.playerView) {
 			PVector X = player.getGlobalDirection();
@@ -167,7 +201,7 @@ public class GeometryWars extends PApplet {
 //			System.out.print(X.toString());
 //			System.out.print(Y.toString());
 //			System.out.println(Z.toString());
-		}		
+		}
 		
 		if(cameraMode == CameraMode.lockedView) {
 			Quaternion Q = boxList.getOrientation();
@@ -292,7 +326,6 @@ public class GeometryWars extends PApplet {
 		} else if (action == 2) {
 			player.moveForwards();
 		}
-		
 	}
 
 	private void updateMarkers() {
@@ -302,7 +335,6 @@ public class GeometryWars extends PApplet {
 			if(!markerList.containsKey( p ) ){
 				markerList.put(p, new Marker(this, player.getGlobalPos(), color(255, 0, 0)) );
 			}
-			
 		}
 //		if (counter % s == s * 7 / 12) {
 //			if(!markerList.containsKey( player.getPos() ) ){
@@ -444,7 +476,14 @@ public class GeometryWars extends PApplet {
 		endPoint = camPos.copy().add(direction);
 		System.out.println("[" + mX + "," + mY + "]");
 		System.out.println("Camera position: " + camPos.toString());
-		System.out.println(startPoint.toString() + " and " + endPoint.toString());
+		System.out.println("From " + startPoint.toString() + " to " + endPoint.toString());
+		
+		PVector intersection = boxList.getLineIntersection(startPoint, direction);
+		if (intersection != null) {
+			PVector p = intersection.copy();
+			markerList.put(p, new Marker(this, intersection, color(255,255,255)) );	
+			System.out.println("A marker was put!");
+		}
 	}
   
 	// Updates key presses

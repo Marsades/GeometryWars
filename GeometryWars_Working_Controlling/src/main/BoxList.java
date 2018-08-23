@@ -233,4 +233,21 @@ public class BoxList {
 //		targetOrientation = c.normalize();
 //		System.out.println("Target orientation set to: " + c.toString());
 //	}
+
+	public PVector getLineIntersection(PVector startPoint, PVector direction) {
+		// TODO Auto-generated method stub
+		float minDist = Float.MAX_VALUE;
+		PVector intersect = null;
+		for (int i = 0; i < Vects.length; i++) {
+			PVector normal = Vects[i].copy();
+			PVector pointInPlane = Vects[i].copy().mult(sideLength/2);
+			PVector pointOnLine = startPoint.copy();
+			PVector lineDirection = direction.copy();
+			float d = pointInPlane.sub(pointOnLine).dot(normal) / lineDirection.dot(normal);
+			if(d < minDist) {
+				intersect = lineDirection.mult(d).add(pointOnLine);
+			}
+		}
+		return intersect;
+	}
 }
